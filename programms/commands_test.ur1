@@ -1,0 +1,65 @@
+.data
+	byte num1 0d10
+	byte num2 0d11
+	byte num3 0d12
+
+.code
+proc _ISR:
+	ret
+proc main:
+l1:	move  AX BX
+	write AX 0d16
+	saveR num3 AX
+	saveC num3 0d20
+	svPR  AX BX
+	load  AX num3
+	loadP AX BX
+
+	andR  AX BX
+	orR   AX BX
+	xorR  AX BX
+	addR  AX BX
+	subR  AX BX
+
+	andC  AX 0d10
+	orC   AX 0d10
+	xorC  AX 0d10
+	addC  AX 0d10
+	subC  AX 0d10
+
+	incr  AX
+	decr  AX
+	not   AX
+	shl   AX
+	shr   AX
+
+	mod2  AX
+	mod4  AX
+	mod8  AX
+	mod16 AX
+	
+	cmpR  AX BX
+	cmpC  AX 0d10
+
+	jump  l1
+	jumpP AX
+	beq   l1
+	bne   l1
+	blt   l1
+	ble   l1
+	bmt   l1
+	bme   l1
+	bov   l1
+	bno   l1
+	call  main
+	ret
+
+	onA
+	offA
+	onB
+	offB
+	int
+	noI
+	msSR  AX
+	msSC  0d3
+	noop

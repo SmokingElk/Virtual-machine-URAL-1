@@ -1,0 +1,11 @@
+.data
+	byte num1 0d5
+
+.code
+proc main:
+	onA
+	load  AX num1
+	addR  AX AX
+	saveR num1 AX
+	move  AO AX
+l1:	jump  l1 

@@ -1,0 +1,13 @@
+#include <screen.ur1>
+
+.code
+proc main:
+	write AP 0d4
+	write BP 0d4
+	call  screenInit
+	
+	write CP 0d1
+	call  screenFill
+	
+	SC_BLIT
+l1:	jump  l1 

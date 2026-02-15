@@ -1,0 +1,11 @@
+{
+  "name": "ural-1-emulator",
+  "version": "1.0.0",
+  "description": "Ural-1 emulator on SML.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Smoking_Elk",
+  "license": "ISC"
+}

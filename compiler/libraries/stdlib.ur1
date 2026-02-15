@@ -1,0 +1,45 @@
+#define SEG_CODE1 0d0
+#define SEG_CODE2 0d1
+#define SEG_CODE3 0d2
+#define SEG_DATA  0d3
+
+#define BIT_LT    0
+#define BIT_EQ    1
+#define BIT_OV    2
+#define BIT_INT   3
+#define BIT_PA    4
+#define BIT_PB    5
+#define BIT_GP0   6
+#define BIT_GP1   7
+
+#define ZERO      0d0
+#define INT_MAX   0d127
+#define INT_MIN   0d128
+#define UINT_MAX  0d255
+
+#define BIT_SGN   7
+
+#define NULL      0d0
+
+#define SAVE_RA   write GX IP() \ addC GX 0d3
+#define RET       jumpP GX 
+
+.code
+// добавить число в стек
+proc push:
+	svPR  SP AP
+	incr  SP
+	ret
+
+// удалить число из стека
+proc pop:
+	loadP RV SP
+	decr  SP
+	ret
+	
+// пропустить 2 * AP тактов
+proc delay:
+_dl_lp:	decr  AP
+	cmpC  AP 0d0
+	bmt   _dl_lp
+	ret

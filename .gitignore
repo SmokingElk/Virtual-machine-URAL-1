@@ -1,0 +1,4 @@
+node_modules/
+*.ini
+programms_compiled/
+nw.dll

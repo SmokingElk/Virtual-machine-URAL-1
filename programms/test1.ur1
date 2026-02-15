@@ -1,0 +1,20 @@
+.data
+	byte num1 0d2
+	char letter 'a'
+
+.code
+proc _ISR:
+	noI
+	write BO 0d1
+	int
+	ret
+
+proc main:
+	onA
+	onB
+	write AO 0d0
+	write BO 0d0
+	
+lp:	incr  AO
+	mod4  AO
+	jump  lp 

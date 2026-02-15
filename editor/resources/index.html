@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Security-Policy">
+	
+	<title id="title">ЗАРЯ-3 редактор</title>
+</head>
+<body class="preload">
+	<div class="wrapper">
+		<div class="code_window">
+			<div class="code_layout">
+				<pre class="code_lines_num" id="lines_num"></pre>
+				<div class="code_field">
+					<pre class="code_text" id="code_text"></pre>
+					<textarea class="code_input" id="code_input"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="popup_container">
+		<div class="popup_body">
+			<div class="popup_header">
+				<div class="popup_title">compilation</div>
+				<div class="popup_close" tabindex="-1">╳</div>
+			</div>
+
+			<div class="popup_text">Assembler path</div>
+			<textarea rows="1" class="popup_textarea path_field" id="assembler_path" placeholder="path" tabindex="-1"></textarea>
+
+			<div class="popup_text">Result saving directory</div>
+			<textarea rows="1" class="popup_textarea path_field res_field" id="result_path" placeholder="path" tabindex="-1"></textarea>
+
+			<button class="popup_btn" id="compile_btn" tabindex="-1">Compile</button>
+			<pre class="popup_out compile_out" id="compile_out"></pre>
+		</div>
+	</div>
+
+	<script src="packages controller.js"></script>
+</body>
+</html>

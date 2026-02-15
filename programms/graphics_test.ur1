@@ -1,0 +1,22 @@
+#define IDLE        0b00000000
+#define CLEAR_PIXEL 0b01000000
+#define FILL_PIXEL  0b10000000
+#define BLIT        0b11000000
+
+.code
+proc main:
+	onA
+	onB
+	
+	write CX 0d0
+	
+lp:	move  AO CX
+	move  BO CX
+	orC   AO FILL_PIXEL
+	
+	incr  CX
+	cmpC  CX 0d16
+	blt   lp
+	
+	orC   AO BLIT
+l1:	jump  l1 

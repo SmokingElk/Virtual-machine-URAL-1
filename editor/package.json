@@ -1,0 +1,15 @@
+{
+  "name": "Ural-1 editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "resources/init.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Smoking_Elk",
+  "license": "ISC",
+
+  "window": {
+    "icon": "icon.png"
+  }
+}

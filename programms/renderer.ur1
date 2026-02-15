@@ -1,0 +1,208 @@
+#include <math.ur1>
+#include <screen.ur1>
+
+#define  SCREEN_WIDTH 0d32
+#define  SCREEN_HEIGHT 0d32
+#define  SCREEN_HALF_W 0d16
+#define  SCREEN_HALF_H 0d16
+
+#define  VERTS_COUNT  0d5
+#define  EDGES_COUNT  0d8
+#define  FOCAL_LENGTH 0d18
+
+.data
+	byte vertexesX[5] 0d-13 0d-3 0d3 0d13 0d0
+	byte vertexesY[5] 0d8 0d8 0d8 0d8 0d-12
+	byte vertexesZ[5] 0d3 0d19 0d-7 0d9 0d6
+	byte edgeFrom[8] 0d0 0d0 0d3 0d3 0d0 0d1 0d2 0d3
+	byte edgeTo[8] 0d1 0d2 0d1 0d2 0d4 0d4 0d4 0d4
+
+	byte screenX[5] ?
+	byte screenY[5] ?
+
+.code
+// AP - coordinate, BP - z
+proc project:
+	svPR  SP AX
+	incr  SP
+	svPR  SP BX
+	incr  SP 
+	svPR  SP CX
+	incr  SP
+	
+	write CX false
+	cmpC  AP 0d0
+	bme   _pr_sr
+	write CX true
+	not   AP
+	incr  AP
+	
+_pr_sr: move  BX BP
+	addC  BX FOCAL_LENGTH
+	
+	write BP FOCAL_LENGTH
+	call  mult
+	
+	move  AX RV
+	write RV 0d0
+	
+_pr_lp: cmpR  AX BX
+	bme   _pr_ic
+	cmpC  AX 0d0
+	blt   _pr_ic
+	jump  _pr_cr
+	
+_pr_ic: subR  AX BX
+	incr  RV
+	jump  _pr_lp
+	
+_pr_cr:	cmpC  CX false
+	beq   _pr_ex
+	not   RV
+	incr  RV
+	
+_pr_ex:	decr  SP
+	loadP CX SP
+	decr  SP
+	loadP BX SP
+	decr  SP
+	loadP AX SP
+	RET
+
+proc calcScreenCoords:
+	// пролог
+	svPR  SP CX
+	incr  SP
+	svPR  SP DX
+	incr  SP
+	svPR  SP EX
+	incr  SP
+	svPR  SP GX
+	incr  SP
+	
+	// тело
+	write CX 0d0
+	
+	// проекция X
+_csc_l:	write DX ref(vertexesX)
+	addR  DX CX
+	loadP AP DX
+	
+	write EX ref(vertexesZ)
+	addR  EX CX
+	loadP BP EX
+	
+	SAVE_RA
+	call  project
+	addC  RV SCREEN_HALF_W
+	
+	write DX ref(screenX)
+	addR  DX CX
+	svPR  DX RV
+	
+	// проекция Y
+	write DX ref(vertexesY)
+	addR  DX CX
+	loadP AP DX
+	
+	loadP BP EX
+	
+	SAVE_RA
+	call  project
+	addC  RV SCREEN_HALF_H
+	
+	write DX ref(screenY)
+	addR  DX CX
+	svPR  DX RV
+	
+	// счетчик цикла
+	incr  CX
+	cmpC  CX VERTS_COUNT
+	blt   _csc_l
+	
+	// эпилог
+	decr  SP
+	loadP GX SP
+	decr  SP
+	loadP EX SP
+	decr  SP
+	loadP DX SP
+	decr  SP
+	loadP CX SP
+	RET
+
+proc drawEdges:
+	// пролог
+	svPR  SP CX
+	incr  SP
+	svPR  SP DX
+	incr  SP
+	svPR  SP EX
+	incr  SP
+	svPR  SP FX
+	incr  SP
+	svPR  SP GX
+	incr  SP
+	
+	// тело
+	write CX 0d0
+	
+	// нарисовать ребро
+_de_lp:	write DX ref(edgeFrom)
+	addR  DX CX
+	loadP EX DX
+	
+	write DX ref(screenX)
+	addR  DX EX
+	loadP AP DX
+	
+	write DX ref(screenY)
+	addR  DX EX
+	loadP CP DX
+	
+	write DX ref(edgeTo)
+	addR  DX CX
+	loadP EX DX
+	
+	write DX ref(screenX)
+	addR  DX EX
+	loadP BP DX
+	
+	write DX ref(screenY)
+	addR  DX EX
+	loadP FX DX
+	
+	SAVE_RA
+	call  screenLine
+	
+	// счетчик цикла
+	incr  CX
+	cmpC  CX EDGES_COUNT
+	blt   _de_lp
+	
+	// эпилог
+	decr  SP
+	loadP GX SP
+	decr  SP
+	loadP FX SP
+	decr  SP
+	loadP EX SP
+	decr  SP
+	loadP DX SP
+	decr  SP
+	loadP CX SP
+	RET
+
+proc main:
+	write AP SCREEN_WIDTH 
+	write BP SCREEN_HEIGHT 
+	call  screenInit
+	
+	SAVE_RA
+	call  calcScreenCoords
+	
+	SAVE_RA
+	call  drawEdges
+	
+	SC_BLIT
+hlt:    jump  hlt 

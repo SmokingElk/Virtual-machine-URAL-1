@@ -1,0 +1,51 @@
+#include <screen.ur1>
+#include <math.ur1>
+
+#define SCREEN_WIDTH 0d16
+#define SCREEN_HEIGHT 0d16
+
+.code
+proc main:
+	write AP SCREEN_WIDTH
+	write BP SCREEN_HEIGHT
+	call  screenInit
+	
+	write AX 0d0
+	write BX 0d0
+	
+lp_pix:	move  AP AX
+	subC  AP 0d8
+	call  abs
+	move  BP AP
+	call  mult
+	
+	move  CX RV
+	
+	move  AP BX
+	subC  AP 0d8
+	call  abs
+	move  BP AP
+	call  mult
+	
+	addR  CX RV
+	
+	cmpC  CX 0d36
+	blt   next_p
+	cmpC  CX 0d64
+	bmt   next_p
+	
+	move  AO AX
+	move  BO BX
+	SC_FILL_PIXEL
+	
+next_p:	incr  AX
+	cmpC  AX SCREEN_WIDTH
+	blt   lp_pix
+	
+	write AX 0d0
+	incr  BX
+	cmpC  BX SCREEN_HEIGHT
+	blt   lp_pix
+	
+	SC_BLIT
+hlt:	jump  hlt   

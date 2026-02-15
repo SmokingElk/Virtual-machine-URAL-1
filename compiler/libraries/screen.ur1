@@ -1,0 +1,168 @@
+#define SC_IDLE_CODE   0b00111111
+#define SC_CLEAR_CODE  0b01000000
+#define SC_FILL_CODE   0b10000000
+#define SC_BLIT_CODE   0b11000000
+
+#define SC_CLEAR_PIXEL orC AO 0b01000000
+#define SC_FILL_PIXEL  orC AO 0b10000000
+#define SC_BLIT        orC AO 0b11000000
+
+.data
+	byte screenWidth 0d0
+	byte screenHeight 0d0
+
+.code
+proc screenInit:
+	onA
+	onB
+	saveR screenWidth AP
+	saveR screenHeight BP
+	ret
+
+proc screenFill:
+	svPR  SP GX
+	incr  SP
+	svPR  SP FX
+	
+	write AP 0d0
+	write BP 0d0
+	load  GX screenWidth 
+	load  FX screenHeight
+	
+	cmpC  CP 0d0
+	beq   _fs_c
+	write CP SC_FILL_CODE
+	jump  _fs_lp
+_fs_c:  write CP SC_CLEAR_CODE
+	
+_fs_lp:	move  AO AP
+	move  BO BP
+	orR   AO CP
+	
+	incr  AP
+	cmpR  AP GX
+	blt   _fs_lp
+	
+	write AP 0d0
+	incr  BP 
+	cmpR  BP FX
+	blt   _fs_lp
+	
+	loadP FX SP
+	decr  SP
+	loadP GX SP
+	ret
+
+// IX - x1, JX - x2, KX - y1, FX - y2 
+// AX - dx, BX - dy, CX - steep, DX - vy, EX - error
+proc screenLine:
+	// пролог
+	svPR  SP AX
+	incr  SP
+	svPR  SP BX
+	incr  SP
+	svPR  SP CX
+	incr  SP
+	svPR  SP DX
+	incr  SP
+	svPR  SP EX
+	
+	// тело
+	move  BX FX
+	subR  BX KX
+	
+	cmpC  BX 0d0
+	bme   _sl_dx
+	not   BX
+	incr  BX
+	
+	// расчет dx
+_sl_dx:	move  AX JX
+	subR  AX IX
+	
+	cmpC  AX 0d0
+	bme   _sl_sp
+	not   AX
+	incr  AX
+	
+	// swap steep
+_sl_sp:	write CX false
+	cmpR  BX AX
+	ble   _sl_sw
+	
+	write CX true
+	
+	move  EX IX
+	move  IX KX
+	move  KX EX
+	
+	move  EX JX
+	move  JX FX
+	move  FX EX
+	
+	// swap dir
+_sl_sw:	cmpR  IX JX
+	ble   _sl_in
+	
+	move  EX IX
+	move  IX JX
+	move  JX EX
+	
+	move  EX KX
+	move  KX FX
+	move  FX EX
+	
+	// init
+_sl_in: move  AX JX
+	subR  AX IX
+	
+	move  BX FX
+	subR  BX KX
+	
+	cmpC  BX 0d0
+	bme   _sl_vy
+	not   BX
+	incr  BX
+	
+	// расчет vy
+_sl_vy:	write DX 0d1
+	cmpR  FX KX
+	bmt   _sl_ce
+	write DX 0d-1
+	
+	// расчет ошибки
+_sl_ce:	move  EX AX
+	shrA  EX
+	
+	// цикл
+_sl_lp:	move  AO IX
+	move  BO KX
+	cmpC  CX false
+	beq   _sl_dr
+	move  AO KX
+	move  BO IX
+	
+_sl_dr:	SC_FILL_PIXEL
+	
+	addR  EX BX
+	
+	cmpC  EX 0d0
+	ble   _sl_ic
+	addR  KX DX
+	subR  EX AX
+	
+_sl_ic:	incr  IX
+	cmpR  IX JX
+	blt   _sl_lp
+	
+	// эпилог
+	loadP EX SP
+	decr  SP
+	loadP DX SP
+	decr  SP
+	loadP CX SP
+	decr  SP
+	loadP BX SP
+	decr  SP
+	loadP AX SP
+	ret

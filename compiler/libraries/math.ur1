@@ -1,0 +1,52 @@
+.code
+
+// получить знак числа AP в RV (0d0 - положительное или 0, 0d1 - отрицательное)
+proc sgn:
+	cmpC  AP 0d0
+	bme   _sgn_p
+	write RV 0d0
+	ret
+_sgn_p:	write RV 0d1
+	ret
+
+// получить модуль числа AP
+proc abs:
+	cmpC  AP 0d0
+	blt   _abs_r
+	ret
+_abs_r:	not   AP
+	incr  AP
+	ret
+
+// получить произведение AP и BP в RV (для целых положительных)
+proc mult:
+	write RV 0d0 
+_mt_lp:	cmpC  BP 0d0
+	ble   _mt_r
+	addR  RV AP
+	decr  BP
+	jump _mt_lp
+_mt_r:	ret
+
+// получить частное AP и BP в RV (для целых положительных), в AP возвращается остаток
+proc div:
+	write RV 0d0
+_dv_lp:	cmpR  AP BP
+	blt   _dv_r
+	subR  AP BP
+	incr  RV
+	jump _dv_lp
+_dv_r:	ret
+
+// является ли BP делителем AP, результат в RV
+proc isDivider:
+_iv_lp:	cmpR  AP BP
+	blt   _iv_r
+	subR  AP BP
+	jump  _iv_lp
+_iv_r:	cmpC  AP 0d0
+	beq   _iv_t
+	write RV false
+	ret
+_iv_t:	write RV true
+	ret

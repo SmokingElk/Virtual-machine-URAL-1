@@ -1,0 +1,11 @@
+.code
+proc main:
+	onA
+	write AX INT_MAX
+	write BX 0d1
+	cmpR  AX BX
+	bov   outYes
+	write AO false
+	jump  l1
+outYes:	write AO true
+l1:	jump  l1 

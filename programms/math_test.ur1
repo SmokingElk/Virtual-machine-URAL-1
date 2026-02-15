@@ -1,0 +1,14 @@
+#include <math.ur1>
+
+.code
+proc main:
+	onA
+	onB
+	write AP 0d-5
+	call  abs
+	move  AO AP
+	write AP 0d6
+	write BP 0d3
+	call  mult
+	move  BO RV
+hlt:	jump  hlt 

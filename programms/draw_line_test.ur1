@@ -1,0 +1,24 @@
+#include <screen.ur1>
+
+#define SCREEN_WIDTH  0d16
+#define SCREEN_HEIGHT 0d16
+
+#define X1 0d4
+#define Y1 0d8
+#define X2 0d13
+#define Y2 0d3
+
+.code
+proc main:
+	write AP SCREEN_WIDTH
+	write BP SCREEN_HEIGHT
+	call  screenInit
+	
+	write AP X1
+	write BP X2
+	write CP Y1
+	write FX Y2
+	call  screenLine
+	
+	SC_BLIT
+hlt:	jump  hlt 

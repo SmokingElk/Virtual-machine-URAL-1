@@ -1,0 +1,32 @@
+.code
+proc f1:
+	svPR  SP GX
+	incr  SP
+	
+	write AO 0d1
+	
+	decr  SP
+	loadP GX SP
+	RET
+
+proc f2:
+	svPR  SP GX
+	incr  SP
+	
+	SAVE_RA
+	call  f1
+	
+	write AO 0d2
+	
+	decr  SP
+	loadP GX SP
+	RET
+
+proc main:
+	onA
+	
+	SAVE_RA
+	call  f2
+	
+	write AO 0d3
+hlt:	jump  hlt 

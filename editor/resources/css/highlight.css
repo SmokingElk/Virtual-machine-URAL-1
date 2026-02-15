@@ -1,0 +1,54 @@
+.h_comment,
+.h_comment > .h_command,
+.h_comment > .h_register,
+.h_comment > .h_digit,
+.h_comment > .h_mark,
+.h_comment > .h_asm_funcs,
+.h_comment > .h_keywords,
+.h_comment > .h_segments,
+.h_comment > .h_macro,
+.h_comment > .h_text,
+.h_comment > .h_char,
+.h_comment > .h_bool,
+.h_comment > .h_tab {
+	color: #74705D !important;
+	font-style: normal !important;
+}
+
+.h_command {
+	color: #F92472;
+}
+
+.h_register {
+	color: #67D8EF;
+}
+
+.h_digit, .h_bool, .h_asm_funcs {
+	color: #AC80FF;
+}	
+
+.h_mark {
+	color: #A6E22B;
+}
+
+.h_segments {
+	color: #FD9622;
+}
+
+.h_macro {
+	color: #FD9622;
+	font-style: italic;
+}
+
+.h_keywords {
+	color: #67D8EF;
+	font-style: italic;
+}
+
+.h_text, .h_char {
+	color: #E7DB74;
+}
+
+.h_tab {
+	border-left: 1px dotted #474842;
+}

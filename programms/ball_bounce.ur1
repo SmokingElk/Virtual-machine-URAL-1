@@ -1,0 +1,58 @@
+#include <screen.ur1>
+#include <math.ur1>
+
+#define SCREEN_WIDTH  0d20
+#define SCREEN_HEIGHT 0d16  
+
+#define B_LEFT        0d0
+#define B_RIGHT       0d19
+#define B_TOP         0d0
+#define B_BOTTOM      0d15
+#define START_X       0d6
+#define START_Y       0d3
+
+.code
+proc main:
+	write AP SCREEN_WIDTH
+	write BP SCREEN_HEIGHT
+	call  screenInit
+	
+	write AX START_X
+	write BX START_Y
+	write CX 0d1
+	write DX 0d1
+	
+	SC_BLIT
+	write GX ref(fr_f)
+	jumpP GX
+	
+fr_c:	move  AO AX
+	move  BO BX
+	SC_CLEAR_PIXEL
+	
+fr_f:	addR  AX CX
+	addR  BX DX
+	
+	cmpC  AX B_LEFT
+	ble   rev_x
+	cmpC  AX B_RIGHT
+	bme   rev_x
+	jump  chk_y
+	
+rev_x:	not   CX
+	incr  CX
+	
+chk_y:	cmpC  BX B_TOP
+	ble   rev_y
+	cmpC  BX B_BOTTOM
+	bme   rev_y
+	jump  blit
+	
+rev_y:	not   DX 
+	incr  DX
+	
+blit:	move  AO AX
+	move  BO BX
+	SC_FILL_PIXEL
+	SC_BLIT
+	jumpP GX 
